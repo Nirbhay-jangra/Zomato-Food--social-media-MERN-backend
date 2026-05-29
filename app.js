@@ -1,7 +1,7 @@
-// creating server
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const connectDb = require('./db/db.js'); // 1. Import your DB function here
 
 const authRoutes = require('./routes/auth.routes.js');
 const foodRoutes = require('./routes/foods.routes.js');
@@ -23,19 +23,26 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
     if (req.method === "OPTIONS") {
-        return res.sendStatus(200); // ✅ Kills preflight here itself
+        return res.sendStatus(200); 
     }
     next();
 });
 
 app.use(cors(corsOptions)); 
-
-// Global Request Parsers
 app.use(express.json());
-
 app.use(cookieParser());
 
-// 3. Application Routes
+// 2. FORCE DB CONNECTION MIDDLEWARE HERE (Before routes)
+app.use(async (req, res, next) => {
+    try {
+        await connectDb();
+        next();
+    } catch (err) {
+        res.status(500).json({ error: "Database connection failed" });
+    }
+});
+
+// 3. Application Routes (Now safe, because DB will be initialized first)
 app.use('/api/auth', authRoutes);
 app.use('/api/food', foodRoutes);
 app.use('/api/food-partner', foodPartnerRoutes);
