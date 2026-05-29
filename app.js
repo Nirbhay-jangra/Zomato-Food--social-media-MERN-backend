@@ -16,7 +16,18 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"]
 };
 
-// This handles global CORS AND pre-flight options perfectly on its own
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://zomato-food-social-media-mern-front.vercel.app");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200); // ✅ Kills preflight here itself
+    }
+    next();
+});
+
 app.use(cors(corsOptions)); 
 
 // Global Request Parsers
