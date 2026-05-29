@@ -18,7 +18,12 @@ const registerUser = async (req, res) => {
     });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    res.cookie("token", token, { httpOnly: false });
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,        // REQUIRED: Must be true over HTTPS (Vercel)
+    sameSite: "none",    // REQUIRED: Permits cross-domain cookie transfers
+    maxAge: 7 * 24 * 60 * 60 * 1000 
+});
 
     return res.status(201).json({
       message: "User registered Successfully",
@@ -67,7 +72,12 @@ const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
     );
 
-    res.cookie("token", token, { httpOnly: false });
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,        // REQUIRED: Must be true over HTTPS (Vercel)
+    sameSite: "none",    // REQUIRED: Permits cross-domain cookie transfers
+    maxAge: 7 * 24 * 60 * 60 * 1000 
+});
 
     // 3. This is what stops Postman from spinning
     return res.status(200).json({
@@ -123,7 +133,12 @@ const registerFoodPartner = async (req, res) => {
     process.env.JWT_SECRET,
   );
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,        // REQUIRED: Must be true over HTTPS (Vercel)
+    sameSite: "none",    // REQUIRED: Permits cross-domain cookie transfers
+    maxAge: 7 * 24 * 60 * 60 * 1000 
+});
 
   return res.status(200).json({
     message: "Register successful",
@@ -153,7 +168,12 @@ const loginFoodPartner = async (req, res) => {
   }
 
   const token = jwt.sign({ id: foodPartner._id }, process.env.JWT_SECRET);
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,        // REQUIRED: Must be true over HTTPS (Vercel)
+    sameSite: "none",    // REQUIRED: Permits cross-domain cookie transfers
+    maxAge: 7 * 24 * 60 * 60 * 1000 
+});
 
   return res.status(200).json({
     message: "Login successful",
